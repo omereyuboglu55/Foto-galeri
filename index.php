@@ -33,7 +33,7 @@
 	</head>
 	<body>
 		
-		<h1>Şeyma ÖZDEMİR</h1>
+		<h1>Foto Galeri Başlık</h1>
 		<div id="portfolio">
 			<div id="background"></div>		
 			<div class="arrows">

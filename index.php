@@ -1,19 +1,8 @@
 <!doctype html>
+<html>
 <?php
-include('dizinislemleri.class.php');
-$Directory = new DirectoryReader();
-$dizin = substr(__FILE__, 0, -9);
-$Directory->setDir($dizin . 'images');
-foreach ($Directory->getFileList('a') as $dosya) {
-    $uzanti = end(explode('.',$dosya));
-    $isim = explode('.',$dosya);
-    $isim=$isim[0];
-    if ($uzanti == 'jpg' || $uzanti == 'png' || $uzanti == 'jpeg' || $uzanti == 'JPG') {
-        $grup = explode('-', $isim);
-        if (!is_array($resimler[$grup[0]])) $resimler[$grup[0]] = array();
-        array_push($resimler[$grup[0]], $isim . '.' . $uzanti);
-    }
-}
+include_once "fotoGaleri.php";
+$fotoGaleri= new fotoGaleri();
 ?>
 <head>
     <meta charset="utf-8">
@@ -25,9 +14,7 @@ foreach ($Directory->getFileList('a') as $dosya) {
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
     <link href='css/JimNightshade-Regular.ttf' rel='stylesheet' type='text/css'/>
-    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet'
-          type='text/css'>
-
+    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet'type='text/css'>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/portfolio.js" type="text/javascript"></script>
@@ -48,16 +35,13 @@ foreach ($Directory->getFileList('a') as $dosya) {
     <div class="gallery">
         <div class="inside">
             <?php
-            $x = count($resimler);
-            for ($i = 1; $i <= $x; $i++) {
-                if (is_array($resimler[$i])) {
+            foreach ($fotoGaleri->resimler as $item) {
+                if (is_array($item)) {
                     echo '<div class="item">' . "\n";
-                    foreach ($resimler[$i] as $resim) {
+                    foreach ($item as $resim) {
                         echo '<div><img src="images/' . $resim . '"/></div>' . "\n";
                     }
                     echo '</div>' . "\n";
-                } else {
-                    $x++;
                 }
             }
             ?>

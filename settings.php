@@ -8,10 +8,7 @@ if (!ini_get('display_errors')) {
  * galeri başlığı gibi  birçok işlem bu sayfa ile yapılacak
  *
  */
-/*
- * site başlığı
- */
-$title = '';
+
 ?>
 <?php
 include_once "fotoGaleri.php";
@@ -22,52 +19,70 @@ $fotoGaleri= new fotoGaleri();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foto Galeri</title>
-    <link rel="shortcut icon" href="../favicon.ico">
+    <title><?php echo $fotoGaleri->title ?></title>
+    <link rel="shortcut icon" href="">
     <meta name="description" content="Açıklama"/>
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
+    <!-- CaptionHoverEffect-->
+    <link rel="stylesheet" type="text/css" href="css/default.css" />
+    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <script src="js/modernizr.custom.js"></script>
+    <!-- /CaptionHoverEffect-->
     <style>
-        .imageBox {
-            clear: both;
+       .sutun {
+           width: 10%;
             float: left;
-            width: 100px;
-            height: 100px;
-            border: 1px solid;
-            margin: 2px;
         }
-
-        .imageBox img {
-            width: 100%;
-            height: 100%;
-        }
-
-        .satir {
-
-            float: left;
+        .sutun ul{
+            padding: 0;;
         }
     </style>
 </head>
 <body>
+<div class="content">
 <?php
 $fotoGaleri->resimler[] = array('0'); //boş bir sutun eklemek için
 foreach ($fotoGaleri->resimler as $item) {
     if (is_array($item)) {
-        echo '<div class="satir">' . "\n";
+        echo '<div class="sutun">' . "\n";
+        echo '<ul class="grid cs-style-3">'."\n";
         $a = 1;
         foreach ($item as $resim) {
-            echo '<div id="' . $a . '" class="imageBox"><img src="images/' . $resim . '"/></div>' . "\n";
+            //echo '<div id="' . $a . '" class="imageBox"><img src="images/' . $resim . '"/></div>' . "\n";
+            echo '
+            <li id="' . $a . '">
+                <figure>
+                    <img src="images/' . $resim . '" alt="'.$resim.'">
+                    <figcaption>
+                        <a href="#">Değiştir</a>
+                        <a href="#">Sil</a>
+                    </figcaption>
+                </figure>
+            </li>';
             $a++;
         }
         /*
          * if = son sütun hariç her sütüne yeni resim için boş alan ekle
          */
         if (current($item) != '0') {
-            echo '<div id="' . $a . '" class="imageBox"><img src=""/></div>' . "\n";
+            echo '
+            <li id="' . $a . '">
+                <figure>
+                    <img src="images/ekle.png" alt="'.$resim.'">
+                    <figcaption>
+                        <a href="#">Ekle</a>
+                    </figcaption>
+                </figure>
+            </li>';
         }
-        echo '</div>' . "\n";
+        echo '</ul>'."\n".'</div>' . "\n";
     }
 }
 ?>
+</div>
+<!--CaptionHoverEffect-->
+<script src="js/toucheffects.js"></script>
+<!--/CaptionHoverEffect-->
 </body>
 </html>

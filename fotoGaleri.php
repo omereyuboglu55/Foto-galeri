@@ -9,27 +9,47 @@
 
 class fotoGaleri
 {
-    function __construct(){
+    function __construct()
+    {
         $this->resimbelirle();
     }
+
     /*
      * Resimlerin tutulduğu dizi
      *
      * Array
      */
-    public $resimler=array();
+    public $resimler = array();
     /*
      * Belirlenen resmin uzantısı
      *
      * String
      */
-    private  $uzanti;
+    private $uzanti;
     /*
      * İzin verilen uzuntıların saklandığı dizi
      *
      * Array
      */
-    private $gecerliUzantilar=array('jpg','png','jpeg','JPG');
+    private $gecerliUzantilar = array('jpg', 'png', 'jpeg', 'JPG');
+    /*
+     * site başlığı
+     *
+     * String
+     */
+    public $title = 'Foto galeri';
+    /*
+     * Xml dosyasının yolunu tutar
+     *
+     * String
+     */
+    private $xmlDosya = __DIR__;// burası  sorunlı sonuna .'geleri.xml ekleyemiyorum ';
+    /*
+     * xml nesnesini tutan değişken
+     *
+     * Object
+     */
+    public  $xmlObj;
     /*
      * İmages dizinindeki 1-1, 2-1, 2-2 şeklinde isimlendirilmiş resimleri $resimler dizisine atar
      *
@@ -43,12 +63,19 @@ class fotoGaleri
         foreach ($Directory->getFileList('a') as $dosya) {
             $this->uzanti = end(explode('.', $dosya));
             $isim = current(explode('.', $dosya, -1));
-            if (in_array($this->uzanti,$this->gecerliUzantilar)) {
+            if (in_array($this->uzanti, $this->gecerliUzantilar)) {
                 $grup = current(explode('-', $isim));
-                if (!is_array($resimler[$grup])) $resimler[$grup] = array();
+                if (!is_array($this->resimler[$grup])) $this->resimler[$grup] = array();
                 $this->resimler[$grup][] = $isim . '.' . $this->uzanti;
             }
         }
-        return $resimler;
+        return $this->resimler;
+    }
+    /*
+     * Verileri  xml dosyasına kaydeder
+     *
+     */
+    public function kaydet(){
+        $this->xmlObj->asXML($this->xmlDosya);
     }
 }

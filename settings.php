@@ -1,3 +1,4 @@
+<?php session_start();?>
 <!doctype html>
 <?php error_reporting(E_ERROR);
 if (!ini_get('display_errors')) {
@@ -13,6 +14,7 @@ if (!ini_get('display_errors')) {
 <?php
 include_once "fotoGaleri.php";
 $fotoGaleri= new fotoGaleri();
+if($_SESSION['oturum']):
 ?>
 <html>
 <head>
@@ -42,7 +44,7 @@ $fotoGaleri= new fotoGaleri();
 <body>
 <div class="content">
 <?php
-$fotoGaleri->resimler[] = array('0'); //boş bir sutun eklemek için
+$fotoGaleri->resimler[] = array('ekle.png'); //boş bir sutun eklemek için
 foreach ($fotoGaleri->resimler as $item) {
     if (is_array($item)) {
         echo '<div class="sutun">' . "\n";
@@ -79,6 +81,9 @@ foreach ($fotoGaleri->resimler as $item) {
         echo '</ul>'."\n".'</div>' . "\n";
     }
 }
+else:
+header('Location:LoginForm/index.php');
+endif;
 ?>
 </div>
 <!--CaptionHoverEffect-->

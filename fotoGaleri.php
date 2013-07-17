@@ -51,6 +51,12 @@ class fotoGaleri
      */
     public  $xmlObj;
     /*
+     * şifre bilgisini tutan değişken
+     *
+     * String
+     */
+    private $sifre='123456';
+    /*
      * İmages dizinindeki 1-1, 2-1, 2-2 şeklinde isimlendirilmiş resimleri $resimler dizisine atar
      *
      * @return Array
@@ -77,5 +83,14 @@ class fotoGaleri
      */
     public function kaydet(){
         $this->xmlObj->asXML($this->xmlDosya);
+    }
+    /*
+     * Şifre kontrolünü yapan fonksiyon
+     *
+     * @param String
+     * @return Boolean
+     */
+    public function sifreKontrol($sifre){
+        if($this->sifre===$sifre){return true;}else{return false;}
     }
 }

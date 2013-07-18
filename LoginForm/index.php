@@ -2,10 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <?php
+error_reporting(E_ERROR);
+if (!ini_get('display_errors')) {
+ini_set('display_errors', 1);}
 include_once '../fotoGaleri.php';
 $galeri = new fotoGaleri();
 if ($galeri->sifreKontrol($_POST['sifre'])):
-    $_SESSION['oturum']=true;
+    $_SESSION['oturum'] = true;
     header('Location:../settings.php'); else:
     ?>
     <head>
@@ -70,7 +73,8 @@ if ($galeri->sifreKontrol($_POST['sifre'])):
 
             <div id="submit">
                 <form>
-                    <input type="image" src="images/submit_hover.png" id="submit1" value="Sign In" onclick="$('#url').submit();">
+                    <input type="image" src="images/submit_hover.png" id="submit1" value="Sign In"
+                           onclick="$('#url').submit();">
                     <input type="image" src="images/submit.png" id="submit2" value="Sign In">
                 </form>
             </div>

@@ -1,4 +1,4 @@
-<?php session_start();?>
+<?php session_start(); ?>
 <!doctype html>
 <?php error_reporting(E_ERROR);
 if (!ini_get('display_errors')) {
@@ -13,8 +13,8 @@ if (!ini_get('display_errors')) {
 ?>
 <?php
 include_once "fotoGaleri.php";
-$fotoGaleri= new fotoGaleri();
-if($_SESSION['oturum']):
+$fotoGaleri = new fotoGaleri();
+if ($_SESSION['oturum']):
 ?>
 <html>
 <head>
@@ -27,65 +27,89 @@ if($_SESSION['oturum']):
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
     <!-- CaptionHoverEffect-->
-    <link rel="stylesheet" type="text/css" href="css/default.css" />
-    <link rel="stylesheet" type="text/css" href="css/component.css" />
+    <link rel="stylesheet" type="text/css" href="css/default.css"/>
+    <link rel="stylesheet" type="text/css" href="css/component.css"/>
     <script src="js/modernizr.custom.js"></script>
     <!-- /CaptionHoverEffect-->
     <style>
-       .sutun {
-           width: 10%;
+        .sutun {
+            width: 10%;
             float: left;
         }
-        .sutun ul{
+
+        .sutun ul {
             padding: 0;;
         }
     </style>
 </head>
 <body>
 <div class="content">
-<?php
-$fotoGaleri->resimler[] = array('ekle.png'); //boş bir sutun eklemek için
-foreach ($fotoGaleri->resimler as $item) {
-    if (is_array($item)) {
-        echo '<div class="sutun">' . "\n";
-        echo '<ul class="grid cs-style-3">'."\n";
-        $a = 1;
-        foreach ($item as $resim) {
-            //echo '<div id="' . $a . '" class="imageBox"><img src="images/' . $resim . '"/></div>' . "\n";
-            echo '
-            <li id="' . $a . '">
-                <figure>
-                    <img src="images/' . $resim . '" alt="'.$resim.'">
+    <?php
+    $fotoGaleri->resimler[] = array('images/ekle.png'); //boş bir sutun eklemek için
+    $sutunId=1;
+    foreach ($fotoGaleri->resimler as $sutun) {
+        if (is_array($sutun)) {
+            echo '<div class="sutun" id="'.$sutunId.'">' . "\n";
+            echo '<ul class="grid cs-style-3">' . "\n";
+            $resimId = 1;
+            foreach ($sutun as $resim) {
+                echo '
+                <li id="' . $resimId . '">
+                    <figure>
+                        <img src="' . $resim . '" alt="' . $resim . '">
+                ';
+                if (current($sutun) != 'images/ekle.png') {
+                    echo '
                     <figcaption>
                         <a href="#">Değiştir</a>
                         <a href="#">Sil</a>
                     </figcaption>
-                </figure>
-            </li>';
-            $a++;
-        }
-        /*
-         * if = son sütun hariç her sütüne yeni resim için boş alan ekle
-         */
-        if (current($item) != '0') {
-            echo '
-            <li id="' . $a . '">
-                <figure>
-                    <img src="images/ekle.png" alt="'.$resim.'">
+                    ';
+                } else {
+                    echo '
                     <figcaption>
-                        <a href="#">Ekle</a>
+                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimyukle.php">
+                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
+                            <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="submit" value="Ekle">
+                        </form>
+                    </figcaption>
+                    ';
+                }
+                echo '
+                    </figure>
+                </li>';
+                $resimId++;
+            }
+            /*
+             * if = son sütun hariç her sütüne yeni resim için boş alan ekle
+             */
+            if (current($sutun) != 'images/ekle.png') {
+                echo '
+            <li id="' . $resimId . '">
+                <figure>
+                    <img src="images/ekle.png" alt="' . $resim . '">
+                    <figcaption>
+                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimyukle.php">
+                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
+                            <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="submit" value="Ekle">
+                        </form>
                     </figcaption>
                 </figure>
             </li>';
+            }
+            echo '</ul>' . "\n" . '</div>' . "\n";
         }
-        echo '</ul>'."\n".'</div>' . "\n";
+        $sutunId++;
     }
-}
-else:
-header('Location:LoginForm/index.php');
-endif;
-?>
+
+    else:
+        header('Location:LoginForm/index.php');
+    endif;
+    ?>
 </div>
+
 <!--CaptionHoverEffect-->
 <script src="js/toucheffects.js"></script>
 <!--/CaptionHoverEffect-->

@@ -2,7 +2,7 @@
 <html>
 <?php
 include_once "fotoGaleri.php";
-$fotoGaleri= new fotoGaleri();
+$fotoGaleri = new fotoGaleri();
 ?>
 <head>
     <meta charset="utf-8">
@@ -14,7 +14,8 @@ $fotoGaleri= new fotoGaleri();
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
     <link href='css/JimNightshade-Regular.ttf' rel='stylesheet' type='text/css'/>
-    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet'type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet'
+          type='text/css'>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/portfolio.js" type="text/javascript"></script>
@@ -39,7 +40,7 @@ $fotoGaleri= new fotoGaleri();
                 if (is_array($item)) {
                     echo '<div class="item">' . "\n";
                     foreach ($item as $resim) {
-                        echo '<div><img src="images/' . $resim . '"/></div>' . "\n";
+                        echo '<div><img src="' . $resim . '"/></div>' . "\n";
                     }
                     echo '</div>' . "\n";
                 }

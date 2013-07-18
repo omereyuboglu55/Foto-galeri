@@ -1,2 +1,49 @@
 <?xml version="1.0"?>
-<galeri></galeri>
+<galeri>
+    <title>Galeri Ba&#x15F;l&#x131;&#x11F;&#x131;</title>
+    <sutun id="1">
+        <resim id="1">images/4-1.jpg</resim>
+        <resim id="2">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="2">
+        <resim id="1">images/4-1.jpg</resim>
+        <resim id="2">images/4-1.jpg</resim>
+        <resim id="3">images/4-1.jpg</resim>
+        <resim id="4">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="3">
+        <resim id="1">images/4-1.jpg</resim>
+        <resim id="2">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="4">
+        <resim id="1">images/4-1.jpg</resim>
+        <resim id="2">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="5">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="6">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="7">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="8">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="9">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="10">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="11">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="12">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+    <sutun id="13">
+        <resim id="1">images/4-1.jpg</resim>
+    </sutun>
+</galeri>

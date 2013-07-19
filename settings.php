@@ -61,16 +61,27 @@ if ($_SESSION['oturum']):
                 if (current($sutun) != 'images/ekle.png') {
                     echo '
                     <figcaption>
-                        <a href="#">Değiştir</a>
-                        <a href="#">Sil</a>
+                        <form id="resimDegistir_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
+                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
+                            <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="hidden" name="islem" value="degistir">
+                            <input type="submit" value="Değiştir">
+                        </form>
+                        <form id="resimSil_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
+                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
+                            <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="hidden" name="islem" value="sil">
+                            <input type="submit" value="Sil">
+                        </form>
                     </figcaption>
                     ';
                 } else {
                     echo '
                     <figcaption>
-                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimyukle.php">
+                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
                             <input type="hidden" name="sutunId" value="'.$sutunId.'">
                             <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="hidden" name="islem" value="ekle">
                             <input type="submit" value="Ekle">
                         </form>
                     </figcaption>
@@ -90,9 +101,10 @@ if ($_SESSION['oturum']):
                 <figure>
                     <img src="images/ekle.png" alt="' . $resim . '">
                     <figcaption>
-                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimyukle.php">
+                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
                             <input type="hidden" name="sutunId" value="'.$sutunId.'">
                             <input type="hidden" name="resimId" value="'.$resimId.'">
+                            <input type="hidden" name="islem" value="ekle">
                             <input type="submit" value="Ekle">
                         </form>
                     </figcaption>

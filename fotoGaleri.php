@@ -148,7 +148,20 @@ class fotoGaleri
      * @param string $resimId <p>Silinecek resimin numarası</p>
      */
     public function resimSil($sutunId, $resimId){
-        foreach ($this->xmlObj->sutun as $sutun) {
+        $dosya=fopen($this->xmlDosya,'r+b');
+        $fileSize= filesize($this->xmlDosya);
+        $read='';
+        while (!feof($dosya)){
+            $read.=fread($dosya, $fileSize);
+        }
+        fclose($dosya);
+        echo '<xmp>'.$read.'</xmp>';
+        $sutunKonum=strpos($read,'<sutun id="'.$sutunId.'">');
+        $resimkonum=strpos($read,'<resim id="'.$resimId.'">',$sutunKonum);
+        $resimkonumson=strpos($read,'<resim id="'.($resimId + 1).'">',$resimkonum);
+        $read = substr_replace($read,'',$resimkonum,($resimkonumson-$resimkonum));
+        echo '<xmp>'.$read.'</xmp>';
+        /*foreach ($this->xmlObj->sutun as $sutun) {
             if((string)$sutun[id]==$sutunId){
                 $x=(array)$sutun->children();
                 echo '<pre>bu';print_r($x['resim']);echo '</pre>';
@@ -164,7 +177,7 @@ class fotoGaleri
                 }
             }
 
-        }
+        }*/
 
     }
 }

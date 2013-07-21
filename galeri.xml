@@ -4,17 +4,13 @@
     <sutun id="1">
         <resim id="1">images/2-2.jpg</resim>
         <resim id="2">images/2-2.jpg</resim>
-        <resim id="3">images/2-2.jpg</resim>
     </sutun>
     <sutun id="2">
         <resim id="1">images/2-2.jpg</resim>
-        <resim id="2">images/4-1.jpg</resim>
-        <resim id="3">images/2-2.jpg</resim>
-        <resim id="4">images/2-2.jpg</resim>
-    </sutun>
+        <resim id="2">images/2-2.jpg</resim>
+    <resim id="3">images/2-2.jpg</resim></sutun>
     <sutun id="3">
         <resim id="1">images/2-2.jpg</resim>
-        <resim id="2">images/4-1.jpg</resim>
-        <resim id="3">images/2-2.jpg</resim>
+        <resim id="2">images/2-2.jpg</resim>
     </sutun>
 </galeri>

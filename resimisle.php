@@ -27,5 +27,5 @@ switch($_POST['islem']){
         $fotogaleri->resimSil($sutunId,$resimId);
         break;
 }
-//header("Location:settings.php");
+header("Location:settings.php");
 ?>

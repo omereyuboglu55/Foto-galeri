@@ -126,6 +126,7 @@ class fotoGaleri
                                 $resim->addAttribute('id', $resimId);
                             }
                         }
+                    break;
                     }
                 }
             } else {//eğer var olmayan bir sutunsa
@@ -148,36 +149,34 @@ class fotoGaleri
      * @param string $resimId <p>Silinecek resimin numarası</p>
      */
     public function resimSil($sutunId, $resimId){
-        $dosya=fopen($this->xmlDosya,'r+b');
+        $dosya=fopen($this->xmlDosya,'r');
         $fileSize= filesize($this->xmlDosya);
         $read='';
         while (!feof($dosya)){
             $read.=fread($dosya, $fileSize);
         }
         fclose($dosya);
-        echo '<xmp>'.$read.'</xmp>';
-        $sutunKonum=strpos($read,'<sutun id="'.$sutunId.'">');
-        $resimkonum=strpos($read,'<resim id="'.$resimId.'">',$sutunKonum);
-        $resimkonumson=strpos($read,'<resim id="'.($resimId + 1).'">',$resimkonum);
-        $read = substr_replace($read,'',$resimkonum,($resimkonumson-$resimkonum));
-        echo '<xmp>'.$read.'</xmp>';
-        /*foreach ($this->xmlObj->sutun as $sutun) {
+        $sutunKonum=strpos($read,'<sutun id="'.$sutunId.'">') + strlen('<sutun id="'.$sutunId.'">');
+        $sutunKonumSon=strpos($read,'</sutun>',$sutunKonum);
+        $array=array();
+        foreach ($this->xmlObj->sutun as $sutun) {
             if((string)$sutun[id]==$sutunId){
-                $x=(array)$sutun->children();
-                echo '<pre>bu';print_r($x['resim']);echo '</pre>';
-                array_splice($x['resim'],$resimId-1,1);
-                echo '<pre>bu değil';print_r($x['resim']);echo '</pre>';
-                //$sutun=$x;
-                echo '<pre>son';print_r($sutun);echo '</pre>';
                 foreach($sutun->resim as $resim){
-                    if((string)$resim[id]==$resimId){
-                        echo 'tamam bulduk  resimi ama nasıl silecez bunu  şimdi : '.$resim;
-                        echo '<pre>$resim=';print_r($resim);echo '</pre>';
-                    }
+                    $array[(integer)$resim[id]-1]=(string)$resim;
                 }
+                array_splice($array,$resimId-1,1);
+                $a='';
+                foreach ($array as $id => $deger){
+                    $a.='<resim id="'.($id + 1).'">'.$deger."</resim>\n";
+                }
+                $read = substr_replace($read,$a,$sutunKonum,($sutunKonumSon-$sutunKonum));
+                $dosya=fopen($this->xmlDosya,'wt');
+                fwrite($dosya,$read);
+                fclose($dosya);
+                break;
             }
 
-        }*/
+        }
 
     }
 }

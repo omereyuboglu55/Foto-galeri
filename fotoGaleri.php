@@ -9,18 +9,18 @@
 
 class fotoGaleri
 {
-     /*
-     * Resimlerin tutulduğu dizi
-     *
-     * Array
-     */
+    /*
+    * Resimlerin tutulduğu dizi
+    *
+    * Array
+    */
     public $resimler = array();
     /*
      * şifre bilgisini tutan değişken
      *
      * String
      */
-    private $sifre = '123456';/*
+    private $sifre = '123456'; /*
      * Belirlenen resmin uzantısı
      *
      * String
@@ -50,6 +50,7 @@ class fotoGaleri
      * Object
      */
     public $xmlObj;
+
     /*
      *
      */
@@ -59,6 +60,7 @@ class fotoGaleri
         $this->xmlObj = new SimpleXMLElement($this->xmlDosya, null, true);
         $this->setGaleri();
     }
+
     /*
      * Galerş ile ilgili bilgileri değişkenlere aktarır
      *
@@ -106,7 +108,7 @@ class fotoGaleri
      * @param String $resimId Resmin numarası
      * @param String yüklenen resimin bulunduğu konum
      */
-    public function resimyukle($sutunId, $resimId,$resimYolu)
+    public function resimyukle($sutunId, $resimId, $resimYolu)
     {
         if (empty($this->xmlObj->sutun)) { //eğer hiç sutun yoksa birinci sutun ve birinci resimi ekliyor
             $this->xmlObj->addChild('sutun'); //birinci sutun eklendi
@@ -114,69 +116,80 @@ class fotoGaleri
             $this->xmlObj->sutun->addChild('resim', $resimYolu); //birinci resim eklendi
             $this->xmlObj->sutun->resim->addAttribute('id', $resimId); //birinci resime id verildi
         } else { //eğer sutun var ise
-            foreach ($this->xmlObj->sutun as $sutun) {// sutun id leri $idler dizisine yazılıyor
+            foreach ($this->xmlObj->sutun as $sutun) { // sutun id leri $idler dizisine yazılıyor
                 $idler[] = (string)$sutun[id];
             }
-            if (in_array($sutunId, $idler)) {//Eğer gelen sutun id $idler dizisinde varsa yani var olan bir sutunsa
-                foreach ($this->xmlObj->sutun as $sutun) {// idleri kontrol  etmek için sutunlar döndürülüyor
-                    if ((string)$sutun[id] == $sutunId) {// gelen sutunid ye sahip olan sutun bulunuyor
-                        $sutun->addChild('resim', $resimYolu);//sutuna resim ekleniyor
-                        foreach ($sutun->resim as $resim) {//sutun içindeki resimlerin idleri döndürülüyor
-                            if (empty($resim[id])) {//id si olmayan resme id ekleniyor yani yeni resme
+            if (in_array($sutunId, $idler)) { //Eğer gelen sutun id $idler dizisinde varsa yani var olan bir sutunsa
+                foreach ($this->xmlObj->sutun as $sutun) { // idleri kontrol  etmek için sutunlar döndürülüyor
+                    if ((string)$sutun[id] == $sutunId) { // gelen sutunid ye sahip olan sutun bulunuyor
+                        $sutun->addChild('resim', $resimYolu); //sutuna resim ekleniyor
+                        foreach ($sutun->resim as $resim) { //sutun içindeki resimlerin idleri döndürülüyor
+                            if (empty($resim[id])) { //id si olmayan resme id ekleniyor yani yeni resme
                                 $resim->addAttribute('id', $resimId);
                             }
                         }
-                    break;
+                        break;
                     }
                 }
-            } else {//eğer var olmayan bir sutunsa
-                $this->xmlObj->addChild('sutun', '');//yeni sutun ekleniyor
-                foreach ($this->xmlObj->sutun as $sutun) {// idleri kontrol  etmek için sutunlar döndürülüyor
-                    if (empty($sutun[id])) {//id si olmayan yani  yeni sutun bulunuyor
-                        $sutun->addAttribute('id', $sutunId);// yeni sutuna id veriliyor
-                        $sutun->addChild('resim', $resimYolu);//resim elkeniyor
-                        $sutun->resim->addAttribute('id', $resimId);//resme id veriliyor
+            } else { //eğer var olmayan bir sutunsa
+                $this->xmlObj->addChild('sutun', ''); //yeni sutun ekleniyor
+                foreach ($this->xmlObj->sutun as $sutun) { // idleri kontrol  etmek için sutunlar döndürülüyor
+                    if (empty($sutun[id])) { //id si olmayan yani  yeni sutun bulunuyor
+                        $sutun->addAttribute('id', $sutunId); // yeni sutuna id veriliyor
+                        $sutun->addChild('resim', $resimYolu); //resim elkeniyor
+                        $sutun->resim->addAttribute('id', $resimId); //resme id veriliyor
                     }
                 }
             }
         }
-        $this->kaydet();//işlemler sononda değişiklikler dosyaya kaydediliyor
+        $this->kaydet(); //işlemler sononda değişiklikler dosyaya kaydediliyor
     }
+
     /*
      * Belirtilen resmi xml ve dizinden siler
      *
      * @param string $sutunId <p>Silinecek resimin bulunduğu sutun numarası</p>
      * @param string $resimId <p>Silinecek resimin numarası</p>
      */
-    public function resimSil($sutunId, $resimId){
-        $dosya=fopen($this->xmlDosya,'r');
-        $fileSize= filesize($this->xmlDosya);
-        $read='';
-        while (!feof($dosya)){
-            $read.=fread($dosya, $fileSize);
-        }
-        fclose($dosya);
-        $sutunKonum=strpos($read,'<sutun id="'.$sutunId.'">') + strlen('<sutun id="'.$sutunId.'">');
-        $sutunKonumSon=strpos($read,'</sutun>',$sutunKonum);
-        $array=array();
+    public function resimSil($sutunId, $resimId)
+    {
+        $read = file_get_contents($this->xmlDosya);
+        $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">') + strlen('<sutun id="' . $sutunId . '">');
+        $sutunKonumSon = strpos($read, '</sutun>', $sutunKonum);
+        $array = array();
         foreach ($this->xmlObj->sutun as $sutun) {
-            if((string)$sutun[id]==$sutunId){
-                foreach($sutun->resim as $resim){
-                    $array[(integer)$resim[id]-1]=(string)$resim;
+            if ((string)$sutun[id] == $sutunId) {
+                foreach ($sutun->resim as $resim) {
+                    $array[(integer)$resim[id] - 1] = (string)$resim;
                 }
-                array_splice($array,$resimId-1,1);
-                $a='';
-                foreach ($array as $id => $deger){
-                    $a.='<resim id="'.($id + 1).'">'.$deger."</resim>\n";
+                array_splice($array, $resimId - 1, 1);
+                $a = '';
+                foreach ($array as $id => $deger) {
+                    $a .= '<resim id="' . ($id + 1) . '">' . $deger . "</resim>\n";
                 }
-                $read = substr_replace($read,$a,$sutunKonum,($sutunKonumSon-$sutunKonum));
-                $dosya=fopen($this->xmlDosya,'wt');
-                fwrite($dosya,$read);
-                fclose($dosya);
+                $read = substr_replace($read, $a, $sutunKonum, ($sutunKonumSon - $sutunKonum));
+                file_put_contents($this->xmlDosya, $read);
                 break;
             }
 
         }
+    }
 
+    /*
+     * Belirtilen resmi yenisi ile değiştirir
+     *
+     * @param string $sutunId <p>Değiştirilecek resimin bulunduğu sutun numarası</p>
+     * @param string $resimId <p>Değiştirilecek resimin numarası</p>
+     * @param String $resimYolu <p>yüklenen resimin bulunduğu konum</p>
+     */
+    public function resimDegistir($sutunId, $resimId, $resimYolu)
+    {
+        $read = file_get_contents($this->xmlDosya);
+        $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">');
+        $resimkonum = strpos($read, '<resim id="' . $resimId . '">', $sutunKonum);
+        $resimkonumson = strpos($read, '<resim id="' . ($resimId + 1) . '">', $resimkonum);
+        if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum);
+        $read = substr_replace($read, '<resim id="' . $resimId . '">' . $resimYolu . "</resim>\n\t", $resimkonum, ($resimkonumson - $resimkonum));
+        file_put_contents($this->xmlDosya, $read);
     }
 }

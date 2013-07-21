@@ -14,14 +14,13 @@ include "fotoGaleri.php";
 $fotogaleri=new fotoGaleri();
 $sutunId=$_POST['sutunId'];
 $resimId=$_POST['resimId'];
-$resimYolu='images/2-2.jpg';//uploaddan sonra gelecek bu
+$resimYolu='images/4-2.jpg';//uploaddan sonra gelecek bu
 switch($_POST['islem']){
     case 'ekle':
         $fotogaleri->resimyukle($sutunId,$resimId,$resimYolu);
         break;
     case 'degistir':
-        $fotogaleri->resimSil($sutunId,$resimId);
-        $fotogaleri->resimyukle($sutunId,$resimId,$resimYolu);
+        $fotogaleri->resimDegistir($sutunId,$resimId,$resimYolu);
         break;
     case 'sil':
         $fotogaleri->resimSil($sutunId,$resimId);

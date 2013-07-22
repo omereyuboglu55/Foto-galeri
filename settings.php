@@ -14,8 +14,7 @@ if (!ini_get('display_errors')) {
 <?php
 include_once "fotoGaleri.php";
 $fotoGaleri = new fotoGaleri();
-if ($_SESSION['oturum']):
-?>
+if ($_SESSION['oturum']):?>
 <html>
 <head>
     <meta charset="utf-8">
@@ -26,6 +25,16 @@ if ($_SESSION['oturum']):
     <meta name="description" content="Açıklama"/>
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
+    <!-- Add jQuery library -->
+    <script type="text/javascript" src="fancybox/lib/jquery-1.10.1.min.js"></script>
+    <!-- Add fancyBox main JS and CSS files -->
+    <script type="text/javascript" src="fancybox/source/jquery.fancybox.js?v=2.1.5"></script>
+    <link rel="stylesheet" type="text/css" href="fancybox/source/jquery.fancybox.css?v=2.1.5" media="screen"/>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.fancybox').fancybox();
+        });
+    </script>
     <!-- CaptionHoverEffect-->
     <link rel="stylesheet" type="text/css" href="css/default.css"/>
     <link rel="stylesheet" type="text/css" href="css/component.css"/>
@@ -45,79 +54,9 @@ if ($_SESSION['oturum']):
 <body>
 <div class="content">
     <?php
-    $fotoGaleri->resimler[] = array('images/ekle.png'); //boş bir sutun eklemek için
-    $sutunId=1;
-    foreach ($fotoGaleri->resimler as $sutun) {
-        if (is_array($sutun)) {
-            echo '<div class="sutun" id="'.$sutunId.'">' . "\n";
-            echo '<ul class="grid cs-style-3">' . "\n";
-            $resimId = 1;
-            foreach ($sutun as $resim) {
-                echo '
-                <li id="' . $resimId . '">
-                    <figure>
-                        <img src="' . $resim . '" alt="' . $resim . '">
-                ';
-                if (current($sutun) != 'images/ekle.png') {
-                    echo '
-                    <figcaption>
-                        <form id="resimDegistir_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
-                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
-                            <input type="hidden" name="resimId" value="'.$resimId.'">
-                            <input type="hidden" name="islem" value="degistir">
-                            <input type="submit" value="Değiştir">
-                        </form>
-                        <form id="resimSil_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
-                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
-                            <input type="hidden" name="resimId" value="'.$resimId.'">
-                            <input type="hidden" name="islem" value="sil">
-                            <input type="submit" value="Sil">
-                        </form>
-                    </figcaption>
-                    ';
-                } else {
-                    echo '
-                    <figcaption>
-                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
-                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
-                            <input type="hidden" name="resimId" value="'.$resimId.'">
-                            <input type="hidden" name="islem" value="ekle">
-                            <input type="submit" value="Ekle">
-                        </form>
-                    </figcaption>
-                    ';
-                }
-                echo '
-                    </figure>
-                </li>';
-                $resimId++;
-            }
-            /*
-             * if = son sütun hariç her sütüne yeni resim için boş alan ekle
-             */
-            if (current($sutun) != 'images/ekle.png') {
-                echo '
-            <li id="' . $resimId . '">
-                <figure>
-                    <img src="images/ekle.png" alt="' . $resim . '">
-                    <figcaption>
-                        <form id="resimEkle_'.$sutunId.'-'.$resimId.'" method="post" action="resimisle.php">
-                            <input type="hidden" name="sutunId" value="'.$sutunId.'">
-                            <input type="hidden" name="resimId" value="'.$resimId.'">
-                            <input type="hidden" name="islem" value="ekle">
-                            <input type="submit" value="Ekle">
-                        </form>
-                    </figcaption>
-                </figure>
-            </li>';
-            }
-            echo '</ul>' . "\n" . '</div>' . "\n";
-        }
-        $sutunId++;
-    }
-
+    $fotoGaleri->resimleriListele();
     else:
-        header('Location:LoginForm/index.php');
+    header('Location:LoginForm/index.php');
     endif;
     ?>
 </div>

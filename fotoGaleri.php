@@ -175,7 +175,7 @@ class fotoGaleri
         }
     }
 
-    /*
+    /**
      * Belirtilen resmi yenisi ile değiştirir
      *
      * @param string $sutunId <p>Değiştirilecek resimin bulunduğu sutun numarası</p>
@@ -191,5 +191,91 @@ class fotoGaleri
         if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum);
         $read = substr_replace($read, '<resim id="' . $resimId . '">' . $resimYolu . "</resim>\n\t", $resimkonum, ($resimkonumson - $resimkonum));
         file_put_contents($this->xmlDosya, $read);
+    }
+
+    /**
+     *
+     *
+     */
+    public function resimleriListele()
+    {
+        $liste = '';
+        $this->resimler[] = array('images/ekle.png'); //boş bir sutun eklemek için
+        $sutunId = 1;
+        foreach ($this->resimler as $sutun) {
+            if (is_array($sutun)) {
+                $liste .= '<div class="sutun" id="' . $sutunId . '">' . "\n";
+                $liste .= '<ul class="grid cs-style-3">' . "\n";
+                $resimId = 1;
+                foreach ($sutun as $resim) {
+                        $liste .= '     <li id="' . $resimId . '">
+                                 <figure>
+                                    <img src="' . $resim . '" alt="' . $resim . '">';
+                    if (current($sutun) != 'images/ekle.png') {
+                        $liste .= '             <figcaption>
+                                        <div id="fancydegistir" style="display:none;">
+                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                <input type="hidden" name="islem" value="degistir">
+                                                <input type="file" name="resim">
+                                                <input type="submit" value="Tamam">
+                                            </form>
+                                        </div>
+                                        <div id="fancysil" style="display:none;">
+                                            <form id="resimSil_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                                Resmi silmek istiyor musunuz?
+                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                <input type="hidden" name="islem" value="sil">
+                                                <input type="submit" value="Evet">
+                                                <input type="button" value="Hayır" onclick="$.fancybox.close()">
+                                            </form>
+                                        </div>
+                                        <a class="fancybox" href="#fancydegistir">Değiştir</a>
+                                        <a class="fancybox" href="#fancysil">Sil</a>
+                                    </figcaption>';
+
+                    } else {
+                        $liste .= '
+                                    <figcaption>
+                                        <form id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                            <input type="hidden" name="resimId" value="' . $resimId . '">
+                                            <input type="hidden" name="islem" value="ekle">
+                                            <input type="submit" value="Ekle">
+                                        </form>
+                                    </figcaption>
+                        ';
+                    }
+                        $liste .= '
+                                </figure>
+                            </li>';
+                        $resimId++;
+                }
+                /*
+                 * if = son sütun hariç her sütüne yeni resim için boş alan ekle
+                 */
+                if (current($sutun) != 'images/ekle.png') {
+                    $liste .= '
+                            <li id="' . $resimId . '">
+                                <figure>
+                                    <img src="images/ekle.png" alt="' . $resim . '">
+                                    <figcaption>
+                                        <form id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                            <input type="hidden" name="resimId" value="' . $resimId . '">
+                                            <input type="hidden" name="islem" value="ekle">
+                                            <input type="submit" value="Ekle">
+                                        </form>
+                                    </figcaption>
+                                </figure>
+                            </li>';
+                }
+                $liste .= '</ul>' . "\n" . '</div>' . "\n";
+            }
+            $sutunId++;
+        }
+        echo $liste;
     }
 }

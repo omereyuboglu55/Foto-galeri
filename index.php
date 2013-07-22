@@ -14,10 +14,9 @@ $fotoGaleri = new fotoGaleri();
     <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
     <link href='css/JimNightshade-Regular.ttf' rel='stylesheet' type='text/css'/>
-    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet'
-          type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link href="css/style.css" rel="stylesheet" type="text/css"/>
-    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/jquery-1.6.min.js" type="text/javascript"></script>
     <script src="js/portfolio.js" type="text/javascript"></script>
     <script src="js/init.js" type="text/javascript"></script>
 </head>

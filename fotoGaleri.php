@@ -213,7 +213,7 @@ class fotoGaleri
                                     <img src="' . $resim . '" alt="' . $resim . '">';
                     if (current($sutun) != 'images/ekle.png') {
                         $liste .= '             <figcaption>
-                                        <div id="fancydegistir" style="display:none;">
+                                        <div id="fancydegistir_' . $sutunId . '-' . $resimId . '" style="display:none;">
                                             <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
@@ -222,7 +222,7 @@ class fotoGaleri
                                                 <input type="submit" value="Tamam">
                                             </form>
                                         </div>
-                                        <div id="fancysil" style="display:none;">
+                                        <div id="fancysil_' . $sutunId . '-' . $resimId . '" style="display:none;">
                                             <form id="resimSil_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
                                                 Resmi silmek istiyor musunuz?
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
@@ -232,8 +232,8 @@ class fotoGaleri
                                                 <input type="button" value="Hayır" onclick="$.fancybox.close()">
                                             </form>
                                         </div>
-                                        <a class="fancybox" href="#fancydegistir">Değiştir</a>
-                                        <a class="fancybox" href="#fancysil">Sil</a>
+                                        <a class="fancybox" href="#fancydegistir_' . $sutunId . '-' . $resimId . '">Değiştir</a>
+                                        <a class="fancybox" href="#fancysil_' . $sutunId . '-' . $resimId . '">Sil</a>
                                     </figcaption>';
 
                     } else {

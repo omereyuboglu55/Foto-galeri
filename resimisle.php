@@ -26,7 +26,6 @@ switch ($_POST['islem']) {
         echo '<pre>';
         print_r($_FILES);
         echo '</pre>';
-        echo 'sutunId='.$sutunId.'<br/>ResimId='.$resimId;
         //boyut kontrolü  uzantı kontrolü  yapılacak rsim yeniden boyutlandırılacak 600x400
         $uzanti = end(explode('.', $_FILES[resim]['name']));
         $resimYolu = 'images/' . time() . '.' . $uzanti;

@@ -6,52 +6,53 @@
  * Time: 03:16
  * To change this template use File | Settings | File Templates.
  */
-
-class fotoGaleri
+include_once 'SimpleImage.php';
+class fotoGaleri extends SimpleImage
 {
-    /*
-    * Resimlerin tutulduğu dizi
-    *
-    * Array
-    */
+    /**
+     * Resimlerin tutulduğu dizi
+     *
+     * Array
+     */
     public $resimler = array();
-    /*
+    /**
      * şifre bilgisini tutan değişken
      *
      * String
      */
-    private $sifre = '123456'; /*
+    private $sifre = '123456';
+    /**
      * Belirlenen resmin uzantısı
      *
      * String
      */
     private $uzanti;
-    /*
+    /**
      * İzin verilen uzuntıların saklandığı dizi
      *
      * Array
      */
     private $gecerliUzantilar = array('jpg', 'png', 'jpeg', 'JPG');
-    /*
+    /**
      * Site başlığı
      *
      * String
      */
     public $title;
-    /*
+    /**
      * Xml dosyasının yolunu tutar
      *
      * String
      */
     private $xmlDosya = 'galeri.xml';
-    /*
+    /**
      * xml nesnesini tutan değişken
      *
      * Object
      */
     public $xmlObj;
 
-    /*
+    /**
      *
      */
     function __construct()
@@ -61,7 +62,7 @@ class fotoGaleri
         $this->setGaleri();
     }
 
-    /*
+    /**
      * Galerş ile ilgili bilgileri değişkenlere aktarır
      *
      * @return Array
@@ -78,7 +79,7 @@ class fotoGaleri
         }
     }
 
-    /*
+    /**
      * Verileri  xml dosyasına kaydeder
      *
      */
@@ -87,7 +88,7 @@ class fotoGaleri
         $this->xmlObj->asXML($this->xmlDosya);
     }
 
-    /*
+    /**
      * Şifre kontrolünü yapan fonksiyon
      *
      * @param String
@@ -102,14 +103,28 @@ class fotoGaleri
         }
     }
 
-    /*
+    /**
      * Settings.php sayfası aracılığıyla yüklenen resimleri xml e kaydeder
      * @param String $sutunId Resmin bulunduğu sutun numarası
      * @param String $resimId Resmin numarası
-     * @param String yüklenen resimin bulunduğu konum
+     * @param Array yüklenen resimin bilgileri($_FILES)
+     *
+     * @return Bool
      */
-    public function resimyukle($sutunId, $resimId, $resimYolu)
+    public function resimyukle($sutunId, $resimId, $resimBilgileri)
     {
+        $return = false;
+        //boyut kontrolü  uzantı kontrolü  yapılacak rsim yeniden boyutlandırılacak 600x400
+        // uzantı kontrolü
+        $uzanti = end(explode('.', $resimBilgileri['name']));
+        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 5000000) {
+            $resimYolu = 'images/' . time() . '.' . $uzanti;
+
+            $this->load($resimBilgileri['tmp_name']);
+            $this->resize(600,400);
+            $this->save($resimYolu);
+            $return=true;
+        }
         if (empty($this->xmlObj->sutun)) { //eğer hiç sutun yoksa birinci sutun ve birinci resimi ekliyor
             $this->xmlObj->addChild('sutun'); //birinci sutun eklendi
             $this->xmlObj->sutun->addAttribute('id', $sutunId); //birinci sutuna id verildi
@@ -143,9 +158,10 @@ class fotoGaleri
             }
         }
         $this->kaydet(); //işlemler sononda değişiklikler dosyaya kaydediliyor
+        return $return;
     }
 
-    /*
+    /**
      * Belirtilen resmi xml ve dizinden siler
      *
      * @param string $sutunId <p>Silinecek resimin bulunduğu sutun numarası</p>
@@ -180,10 +196,18 @@ class fotoGaleri
      *
      * @param string $sutunId <p>Değiştirilecek resimin bulunduğu sutun numarası</p>
      * @param string $resimId <p>Değiştirilecek resimin numarası</p>
-     * @param String $resimYolu <p>yüklenen resimin bulunduğu konum</p>
+     * @param Array $resimBilgileri <p>yüklenen resimin bulunduğu konum</p>
      */
-    public function resimDegistir($sutunId, $resimId, $resimYolu)
+    public function resimDegistir($sutunId, $resimId, $resimBilgileri)
     {
+        $uzanti = end(explode('.', $resimBilgileri['name']));
+        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 5000000) {
+            $resimYolu = 'images/' . time() . '.' . $uzanti;
+
+            $this->load($resimBilgileri['tmp_name']);
+            $this->resize(600,400);
+            $this->save($resimYolu);
+        }
         $read = file_get_contents($this->xmlDosya);
         $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">');
         $resimkonum = strpos($read, '<resim id="' . $resimId . '">', $sutunKonum);
@@ -208,7 +232,7 @@ class fotoGaleri
                 $liste .= '<ul class="grid cs-style-3">' . "\n";
                 $resimId = 1;
                 foreach ($sutun as $resim) {
-                        $liste .= '     <li id="' . $resimId . '">
+                    $liste .= '     <li id="' . $resimId . '">
                                  <figure>
                                     <img src="' . $resim . '" alt="' . $resim . '">';
                     if (current($sutun) != 'images/ekle.png') {
@@ -239,19 +263,23 @@ class fotoGaleri
                     } else {
                         $liste .= '
                                     <figcaption>
-                                        <form id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
-                                            <input type="hidden" name="sutunId" value="' . $sutunId . '">
-                                            <input type="hidden" name="resimId" value="' . $resimId . '">
-                                            <input type="hidden" name="islem" value="ekle">
-                                            <input type="submit" value="Ekle">
-                                        </form>
+                                        <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
+                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                <input type="hidden" name="islem" value="ekle">
+                                                <input type="file" name="resim">
+                                                <input type="submit" value="Tamam">
+                                            </form>
+                                        </div>
+                                        <a class="fancybox" href="#fancyekle_' . $sutunId . '-' . $resimId . '">Ekle</a>
                                     </figcaption>
                         ';
                     }
-                        $liste .= '
+                    $liste .= '
                                 </figure>
                             </li>';
-                        $resimId++;
+                    $resimId++;
                 }
                 /*
                  * if = son sütun hariç her sütüne yeni resim için boş alan ekle
@@ -262,12 +290,16 @@ class fotoGaleri
                                 <figure>
                                     <img src="images/ekle.png" alt="' . $resim . '">
                                     <figcaption>
-                                        <form id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
-                                            <input type="hidden" name="sutunId" value="' . $sutunId . '">
-                                            <input type="hidden" name="resimId" value="' . $resimId . '">
-                                            <input type="hidden" name="islem" value="ekle">
-                                            <input type="submit" value="Ekle">
-                                        </form>
+                                        <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
+                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                <input type="hidden" name="islem" value="ekle">
+                                                <input type="file" name="resim">
+                                                <input type="submit" value="Tamam">
+                                            </form>
+                                        </div>
+                                        <a class="fancybox" href="#fancyekle_' . $sutunId . '-' . $resimId . '">Ekle</a>
                                     </figcaption>
                                 </figure>
                             </li>';
@@ -279,3 +311,4 @@ class fotoGaleri
         echo $liste;
     }
 }
+?>

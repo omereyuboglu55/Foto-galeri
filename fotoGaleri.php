@@ -113,17 +113,13 @@ class fotoGaleri extends SimpleImage
      */
     public function resimyukle($sutunId, $resimId, $resimBilgileri)
     {
-        $return = false;
-        //boyut kontrolü  uzantı kontrolü  yapılacak rsim yeniden boyutlandırılacak 600x400
-        // uzantı kontrolü
         $uzanti = end(explode('.', $resimBilgileri['name']));
-        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 5000000) {
+        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 10000000) {
             $resimYolu = 'images/' . time() . '.' . $uzanti;
-
             $this->load($resimBilgileri['tmp_name']);
-            $this->resize(600,400);
+            $this->resize(600, 400);
             $this->save($resimYolu);
-            $return=true;
+            $return = true;
         }
         if (empty($this->xmlObj->sutun)) { //eğer hiç sutun yoksa birinci sutun ve birinci resimi ekliyor
             $this->xmlObj->addChild('sutun'); //birinci sutun eklendi
@@ -178,10 +174,17 @@ class fotoGaleri extends SimpleImage
                 foreach ($sutun->resim as $resim) {
                     $array[(integer)$resim[id] - 1] = (string)$resim;
                 }
+                if (!unlink($array[$resimId - 1])) {
+                    echo 'Resim silinemedi';
+                }
                 array_splice($array, $resimId - 1, 1);
                 $a = '';
                 foreach ($array as $id => $deger) {
                     $a .= '<resim id="' . ($id + 1) . '">' . $deger . "</resim>\n";
+                }
+                if(empty($a)){//eğer resim kalmadıysa sütunu sil
+                    $sutunKonum=$sutunKonum-strlen('<sutun id="' . $sutunId . '">');
+                    $sutunKonumSon=$sutunKonumSon+strlen('</sutun>');
                 }
                 $read = substr_replace($read, $a, $sutunKonum, ($sutunKonumSon - $sutunKonum));
                 file_put_contents($this->xmlDosya, $read);
@@ -205,7 +208,7 @@ class fotoGaleri extends SimpleImage
             $resimYolu = 'images/' . time() . '.' . $uzanti;
 
             $this->load($resimBilgileri['tmp_name']);
-            $this->resize(600,400);
+            $this->resize(600, 400);
             $this->save($resimYolu);
         }
         $read = file_get_contents($this->xmlDosya);
@@ -214,6 +217,17 @@ class fotoGaleri extends SimpleImage
         $resimkonumson = strpos($read, '<resim id="' . ($resimId + 1) . '">', $resimkonum);
         if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum);
         $read = substr_replace($read, '<resim id="' . $resimId . '">' . $resimYolu . "</resim>\n\t", $resimkonum, ($resimkonumson - $resimkonum));
+
+        foreach ($this->xmlObj->sutun as $sutun) {
+            if ((string)$sutun[id] == $sutunId) {
+                foreach ($sutun->resim as $resim) {
+                    if (!unlink((string)$resim)) {
+                        echo 'Resim silinemedi';
+                    }
+                }
+
+            }
+        }
         file_put_contents($this->xmlDosya, $read);
     }
 
@@ -311,4 +325,5 @@ class fotoGaleri extends SimpleImage
         echo $liste;
     }
 }
+
 ?>

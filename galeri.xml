@@ -2,16 +2,10 @@
 <galeri>
     <title>Galeri Ba&#x15F;l&#x131;&#x11F;&#x131;</title>
     <sutun id="1">
-        <resim id="1">images/4-2.jpg</resim>
+        <resim id="1">images/1374760562.jpg</resim>
     </sutun>
     <sutun id="2">
-        <resim id="1">images/4-2.jpg</resim>
-    </sutun>
-    <sutun id="3">
-        <resim id="1">images/4-2.jpg</resim>
-        <resim id="2">images/1374625830.jpg</resim>
-	<resim id="3">images/1374626057.jpg</resim></sutun>
-    <sutun id="4">
-        <resim id="1">images/4-2.jpg</resim>
+        <resim id="1">images/1374760572.jpg</resim>
+        <resim id="2">images/1374760594.jpg</resim>
     </sutun>
 </galeri>

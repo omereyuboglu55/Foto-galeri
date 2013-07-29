@@ -20,7 +20,6 @@ switch ($_POST['islem']) {
         $fotogaleri->resimyukle($sutunId, $resimId, $_FILES['resim']);
         break;
     case 'degistir':
-        //echo '<pre>';print_r($_FILES);echo '</pre>';
         $fotogaleri->resimDegistir($sutunId, $resimId, $_FILES['resim']);
         break;
     case 'sil':

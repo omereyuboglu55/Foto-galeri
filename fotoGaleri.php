@@ -58,7 +58,16 @@ class fotoGaleri extends SimpleImage
     function __construct()
     {
         $this->xmlDosya = __DIR__ . '/' . $this->xmlDosya;
-        $this->xmlObj = new SimpleXMLElement($this->xmlDosya, null, true);
+        if (!file_exists($this->xmlDosya)) {
+            $icerik = '<?xml version="1.0"?>
+<galeri>
+    <title>Galeri Başlığı</title>
+</galeri>';
+            if (!file_put_contents($this->xmlDosya, $icerik)) $this->Hata(5);
+            chmod($this->xmlDosya, 0644);
+        }
+        //TODO buradaki taha kontrolü işe yaramıyor araştırmak lazım
+        if (!($this->xmlObj = new SimpleXMLElement($this->xmlDosya, null, true))) $this->Hata(9);
         $this->setGaleri();
     }
 
@@ -85,7 +94,7 @@ class fotoGaleri extends SimpleImage
      */
     public function kaydet()
     {
-        $this->xmlObj->asXML($this->xmlDosya);
+        if (!($this->xmlObj->asXML($this->xmlDosya))) $this->Hata(10);
     }
 
     /**
@@ -109,18 +118,20 @@ class fotoGaleri extends SimpleImage
      * @param String $resimId Resmin numarası
      * @param Array yüklenen resimin bilgileri($_FILES)
      *
+     * @throws ErrorException
      * @return Bool
      */
     public function resimyukle($sutunId, $resimId, $resimBilgileri)
     {
-        $uzanti = end(explode('.', $resimBilgileri['name']));
-        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 10000000) {
-            $resimYolu = 'images/' . time() . '.' . $uzanti;
-            $this->load($resimBilgileri['tmp_name']);
-            $this->resize(600, 400);
-            $this->save($resimYolu);
-            $return = true;
-        }
+        if ($resimBilgileri['error'] === UPLOAD_ERR_OK) {
+            $uzanti = end(explode('.', $resimBilgileri['name']));
+            if (in_array($uzanti, $this->gecerliUzantilar)) {
+                $resimYolu = 'images/' . time() . '.' . $uzanti;
+                if (!($this->load($resimBilgileri['tmp_name']))) $this->Hata(13);
+                $this->resize(600, 400);
+                $this->save($resimYolu);
+            } else $this->Hata(14);
+        } else $this->Hata($resimBilgileri['error']);
         if (empty($this->xmlObj->sutun)) { //eğer hiç sutun yoksa birinci sutun ve birinci resimi ekliyor
             $this->xmlObj->addChild('sutun'); //birinci sutun eklendi
             $this->xmlObj->sutun->addAttribute('id', $sutunId); //birinci sutuna id verildi
@@ -154,7 +165,6 @@ class fotoGaleri extends SimpleImage
             }
         }
         $this->kaydet(); //işlemler sononda değişiklikler dosyaya kaydediliyor
-        return $return;
     }
 
     /**
@@ -165,7 +175,7 @@ class fotoGaleri extends SimpleImage
      */
     public function resimSil($sutunId, $resimId)
     {
-        $read = file_get_contents($this->xmlDosya);
+        if (!($read = file_get_contents($this->xmlDosya))) $this->Hata(11);
         $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">') + strlen('<sutun id="' . $sutunId . '">');
         $sutunKonumSon = strpos($read, '</sutun>', $sutunKonum);
         $array = array();
@@ -175,19 +185,19 @@ class fotoGaleri extends SimpleImage
                     $array[(integer)$resim[id] - 1] = (string)$resim;
                 }
                 if (!unlink($array[$resimId - 1])) {
-                    echo 'Resim silinemedi';
+                    $this->Hata(12);
                 }
                 array_splice($array, $resimId - 1, 1);
                 $a = '';
                 foreach ($array as $id => $deger) {
                     $a .= '<resim id="' . ($id + 1) . '">' . $deger . "</resim>\n";
                 }
-                if(empty($a)){//eğer resim kalmadıysa sütunu sil
-                    $sutunKonum=$sutunKonum-strlen('<sutun id="' . $sutunId . '">');
-                    $sutunKonumSon=$sutunKonumSon+strlen('</sutun>');
+                if (empty($a)) { //eğer resim kalmadıysa sütunu sil
+                    $sutunKonum = $sutunKonum - strlen('<sutun id="' . $sutunId . '">');
+                    $sutunKonumSon = $sutunKonumSon + strlen('</sutun>');
                 }
                 $read = substr_replace($read, $a, $sutunKonum, ($sutunKonumSon - $sutunKonum));
-                file_put_contents($this->xmlDosya, $read);
+                if (!(file_put_contents($this->xmlDosya, $read))) $this->Hata(10);
                 break;
             }
 
@@ -203,32 +213,32 @@ class fotoGaleri extends SimpleImage
      */
     public function resimDegistir($sutunId, $resimId, $resimBilgileri)
     {
-        $uzanti = end(explode('.', $resimBilgileri['name']));
-        if (in_array($uzanti, $this->gecerliUzantilar) && $resimBilgileri['size'] <= 5000000) {
-            $resimYolu = 'images/' . time() . '.' . $uzanti;
-
-            $this->load($resimBilgileri['tmp_name']);
-            $this->resize(600, 400);
-            $this->save($resimYolu);
-        }
-        $read = file_get_contents($this->xmlDosya);
+        if ($resimBilgileri['error'] === UPLOAD_ERR_OK) {
+            $uzanti = end(explode('.', $resimBilgileri['name']));
+            if (in_array($uzanti, $this->gecerliUzantilar)) {
+                $resimYolu = 'images/' . time() . '.' . $uzanti;
+                if (!($this->load($resimBilgileri['tmp_name']))) $this->Hata(13);
+                $this->resize(600, 400);
+                $this->save($resimYolu);
+            } else $this->Hata(14);
+        } else $this->Hata($resimBilgileri['error']);
+        if (!($read = file_get_contents($this->xmlDosya))) $this->Hata(11);
         $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">');
         $resimkonum = strpos($read, '<resim id="' . $resimId . '">', $sutunKonum);
         $resimkonumson = strpos($read, '<resim id="' . ($resimId + 1) . '">', $resimkonum);
         if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum);
         $read = substr_replace($read, '<resim id="' . $resimId . '">' . $resimYolu . "</resim>\n\t", $resimkonum, ($resimkonumson - $resimkonum));
-
         foreach ($this->xmlObj->sutun as $sutun) {
             if ((string)$sutun[id] == $sutunId) {
                 foreach ($sutun->resim as $resim) {
                     if (!unlink((string)$resim)) {
-                        echo 'Resim silinemedi';
+                        $this->Hata(12);
                     }
                 }
 
             }
         }
-        file_put_contents($this->xmlDosya, $read);
+        if (!(file_put_contents($this->xmlDosya, $read))) $this->Hata(10);
     }
 
     /**
@@ -256,6 +266,7 @@ class fotoGaleri extends SimpleImage
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="degistir">
+                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
                                                 <input type="file" name="resim">
                                                 <input type="submit" value="Tamam">
                                             </form>
@@ -278,10 +289,11 @@ class fotoGaleri extends SimpleImage
                         $liste .= '
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="ekle">
+                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
                                                 <input type="file" name="resim">
                                                 <input type="submit" value="Tamam">
                                             </form>
@@ -305,10 +317,11 @@ class fotoGaleri extends SimpleImage
                                     <img src="images/ekle.png" alt="' . $resim . '">
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="ekle">
+                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
                                                 <input type="file" name="resim">
                                                 <input type="submit" value="Tamam">
                                             </form>
@@ -323,6 +336,84 @@ class fotoGaleri extends SimpleImage
             $sutunId++;
         }
         echo $liste;
+    }
+
+    /**
+     * upload_max_filesize değerinin byte cinsinden verir
+     * @return int|string
+     */
+    public function getUploadMaxFilesize()
+    {
+        $val = ini_get('upload_max_filesize');
+        $val = trim($val);
+        $last = strtolower($val[strlen($val) - 1]);
+        switch ($last) {
+            // 'G' birimi PHP 5.1.0 sürümünden beri var.
+            case 'g':
+                $val *= 1024;
+            case 'm':
+                $val *= 1024;
+            case 'k':
+                $val *= 1024;
+        }
+
+        return $val;
+    }
+
+    /**
+     * Bir hata oluştuğunda bu fonksiyon o hatayı denetleyecek yada try kullanınca gerek kalmayacak
+     * @param $kod
+     */
+    public function Hata($kod)
+    {
+
+        switch ($kod) {
+            case 1:
+                die("HATA : Yüklenen Dosya PHP'ninizin verilen dosya boyutunu  aşmaktadır.");
+                break;
+            case 2:
+                die("HATA : Yüklenen Dosya maximum dosya boyutunu  aşmaktadır.");
+                break;
+            case 3:
+                die("HATA : Dosya tam olarak yüklemenemedi");
+                break;
+            case 4:
+                die("HATA : Hiçbir dosya seçilmedi");
+                break;
+            case 5:
+                die("HATA : galeri.xml oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                break;
+            case 6:
+                die("HATA : Geçici dizin yok");
+                break;
+            case 7:
+                die("HATA : Dosya diske yazılamadı");
+                break;
+            case 8:
+                die("HATA : Yükleme bir eklentiden dolayı durdu.");
+                break;
+            case 9:
+                die("HATA : galeri.xml dosyasında hata var.Lütfen Kontrol edin.");
+                break;
+            case 10:
+                die("HATA : Değişiklik galeri.xml dosyasına yazılamadı");
+                break;
+            case 11:
+                die("HATA : galeri.xml dosyası okunamadı.Lütfen dosya izinlerini kontrol edin.");
+                break;
+            case 12:
+                die("HATA : Resim silinemedi.Lütfen dosya izinlerini kontrol edin.");
+                break;
+            case 13:
+                die("HATA : Resim oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                break;
+            case 14:
+                die("HATA : Yüklenen resim uzantısı desteklenmiyor.");
+                break;
+            case 15:
+                die("HATA : ");
+                break;
+        }
     }
 }
 

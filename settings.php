@@ -32,8 +32,41 @@ if ($_SESSION['oturum']):?>
     <link rel="stylesheet" type="text/css" href="fancybox/source/jquery.fancybox.css?v=2.1.5" media="screen"/>
     <script type="text/javascript">
         $(document).ready(function () {
-            $('.fancybox').fancybox();
+            $('.fancybox').fancybox({margin: 0, autoCenter: true, autoResize: true, closeBtn: false});
         });
+        function gonderajax(formId) {
+            $.ajax({
+                type: "POST",
+                data:$("#" + formId + "").serializeArray(),
+                url: "resimisle.php",
+                cache:true,
+                success: function (data) {
+                    if (data == 1 || data == true) {
+                        $.fancybox({
+                            content: "İşleminiz Başarıyla Gerçekleştirldi",
+                            openEffect: "fade",
+                            closeEffect: "fade",
+                            autoSize:true
+                        });
+                    }else{
+                        $.fancybox({
+                            content: data,
+                            openEffect: "fade",
+                            closeEffect: "fade",
+                            autoSize:true
+                        });
+                    }
+                },
+                error:function(x,hata){
+                    $.fancybox({
+                        content: hata,
+                        openEffect: "fade",
+                        closeEffect: "fade",
+                        autoSize:true
+                    });
+                }
+            });
+        }
     </script>
     <!-- CaptionHoverEffect-->
     <link rel="stylesheet" type="text/css" href="css/default.css"/>
@@ -56,7 +89,7 @@ if ($_SESSION['oturum']):?>
     <?php
     $fotoGaleri->resimleriListele();
     else:
-    header('Location:LoginForm/index.php');
+        header('Location:LoginForm/index.php');
     endif;
     ?>
 </div>

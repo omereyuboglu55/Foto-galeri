@@ -23,10 +23,10 @@ class SimpleImage
         $this->image_type = exif_imagetype($filename);
         switch ($this->image_type) {
             case IMAGETYPE_JPEG:
-                if (!($this->image = imagecreatefromjpeg($filename))) return false;
+                if ($this->image = imagecreatefromjpeg($filename)) return true; else return false;
                 break;
             case IMAGETYPE_PNG:
-                if (!($this->image = imagecreatefrompng($filename))) return false;
+                if ($this->image = imagecreatefrompng($filename)) return true; else return false;
                 break;
         }
     }

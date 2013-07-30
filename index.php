@@ -8,7 +8,7 @@ $fotoGaleri = new fotoGaleri();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Foto Galeri</title>
+    <title><?php echo $fotoGaleri->title?></title>
     <link rel="shortcut icon" href="../favicon.ico">
     <meta name="description" content="Açıklama"/>
     <meta name="keywords" content=""/>
@@ -22,7 +22,7 @@ $fotoGaleri = new fotoGaleri();
 </head>
 <body>
 
-<h1>Foto Galeri Başlık</h1>
+<h1><?php echo $fotoGaleri->title?></h1>
 
 <div id="portfolio">
     <div id="background"></div>

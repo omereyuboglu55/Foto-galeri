@@ -38,7 +38,7 @@ class fotoGaleri extends SimpleImage
      *
      * String
      */
-    public $title;
+    public $title = '';
     /**
      * Xml dosyasının yolunu tutar
      *
@@ -94,7 +94,7 @@ class fotoGaleri extends SimpleImage
      */
     public function kaydet()
     {
-        if (!($this->xmlObj->asXML($this->xmlDosya))) $this->Hata(10);
+        if ($this->xmlObj->asXML($this->xmlDosya)) return true; else $this->Hata(10);
     }
 
     /**
@@ -213,6 +213,7 @@ class fotoGaleri extends SimpleImage
      */
     public function resimDegistir($sutunId, $resimId, $resimBilgileri)
     {
+        //resmi yükle ve sunucuda yeniden oluştur
         if ($resimBilgileri['error'] === UPLOAD_ERR_OK) {
             $uzanti = end(explode('.', $resimBilgileri['name']));
             if (in_array($uzanti, $this->gecerliUzantilar)) {
@@ -222,17 +223,17 @@ class fotoGaleri extends SimpleImage
                 $this->save($resimYolu);
             } else $this->Hata(14);
         } else $this->Hata($resimBilgileri['error']);
-        if (!($read = file_get_contents($this->xmlDosya))) $this->Hata(11);
-        $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">');
-        $resimkonum = strpos($read, '<resim id="' . $resimId . '">', $sutunKonum);
-        $resimkonumson = strpos($read, '<resim id="' . ($resimId + 1) . '">', $resimkonum);
-        if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum);
+        if (!($read = file_get_contents($this->xmlDosya))) $this->Hata(11); //xml verilerini oku
+        $sutunKonum = strpos($read, '<sutun id="' . $sutunId . '">'); //aranan sutun tag ının başlangıç konumu belirlenir
+        $resimkonum = strpos($read, '<resim id="' . $resimId . '">', $sutunKonum); //aranan resim tagının başlanğıç konumu belirlenir
+        $resimkonumson = strpos($read, '<resim id="' . ($resimId + 1) . '">', $resimkonum); //aranan resim tagının son konumu belirlenir
+        if (!$resimkonumson) $resimkonumson = strpos($read, '</sutun>', $resimkonum); //eğer resim sonu belirlenemediyse sutun sonu aranır yani resim sutundaki son resimse
         $read = substr_replace($read, '<resim id="' . $resimId . '">' . $resimYolu . "</resim>\n\t", $resimkonum, ($resimkonumson - $resimkonum));
         foreach ($this->xmlObj->sutun as $sutun) {
             if ((string)$sutun[id] == $sutunId) {
                 foreach ($sutun->resim as $resim) {
-                    if (!unlink((string)$resim)) {
-                        $this->Hata(12);
+                    if ((string)$resim[id] == $resimId) {
+                        if (!unlink((string)$resim)) $this->Hata(12);
                     }
                 }
 
@@ -369,49 +370,49 @@ class fotoGaleri extends SimpleImage
 
         switch ($kod) {
             case 1:
-                die("HATA : Yüklenen Dosya PHP'ninizin verilen dosya boyutunu  aşmaktadır.");
+                die("HATA 1: Yüklenen Dosya PHP'ninizin verilen dosya boyutunu  aşmaktadır.");
                 break;
             case 2:
-                die("HATA : Yüklenen Dosya maximum dosya boyutunu  aşmaktadır.");
+                die("HATA 2: Yüklenen Dosya maximum dosya boyutunu  aşmaktadır.");
                 break;
             case 3:
-                die("HATA : Dosya tam olarak yüklemenemedi");
+                die("HATA 3: Dosya tam olarak yüklemenemedi");
                 break;
             case 4:
-                die("HATA : Hiçbir dosya seçilmedi");
+                die("HATA 4: Hiçbir dosya seçilmedi");
                 break;
             case 5:
-                die("HATA : galeri.xml oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                die("HATA 5: galeri.xml oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
                 break;
             case 6:
-                die("HATA : Geçici dizin yok");
+                die("HATA 6: Geçici dizin yok");
                 break;
             case 7:
-                die("HATA : Dosya diske yazılamadı");
+                die("HATA 7: Dosya diske yazılamadı");
                 break;
             case 8:
-                die("HATA : Yükleme bir eklentiden dolayı durdu.");
+                die("HATA 8: Yükleme bir eklentiden dolayı durdu.");
                 break;
             case 9:
-                die("HATA : galeri.xml dosyasında hata var.Lütfen Kontrol edin.");
+                die("HATA 9: galeri.xml dosyasında hata var.Lütfen Kontrol edin.");
                 break;
             case 10:
-                die("HATA : Değişiklik galeri.xml dosyasına yazılamadı");
+                die("HATA 10: Değişiklik galeri.xml dosyasına yazılamadı");
                 break;
             case 11:
-                die("HATA : galeri.xml dosyası okunamadı.Lütfen dosya izinlerini kontrol edin.");
+                die("HATA 11: galeri.xml dosyası okunamadı.Lütfen dosya izinlerini kontrol edin.");
                 break;
             case 12:
-                die("HATA : Resim silinemedi.Lütfen dosya izinlerini kontrol edin.");
+                die("HATA 12: Resim silinemedi.Lütfen dosya izinlerini kontrol edin.");
                 break;
             case 13:
-                die("HATA : Resim oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                die("HATA 13: Resim oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
                 break;
             case 14:
-                die("HATA : Yüklenen resim uzantısı desteklenmiyor.");
+                die("HATA 14: Yüklenen resim uzantısı desteklenmiyor.");
                 break;
             case 15:
-                die("HATA : ");
+                die("HATA 15: ");
                 break;
         }
     }

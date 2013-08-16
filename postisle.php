@@ -14,7 +14,6 @@ include "fotoGaleri.php";
 $fotogaleri = new fotoGaleri();
 $sutunId = $_POST['sutunId'];
 $resimId = $_POST['resimId'];
-$resimYolu = 'images/4-2.jpg'; //uploaddan sonra gelecek bu
 switch ($_POST['islem']) {
     case 'ekle':
         $fotogaleri->resimyukle($sutunId, $resimId, $_FILES['resim']);
@@ -24,6 +23,13 @@ switch ($_POST['islem']) {
         break;
     case 'sil':
         $fotogaleri->resimSil($sutunId, $resimId);
+        break;
+    case 'sifeDegistir':
+            $yeniSifre=$_POST['yeniSifre'];
+            $fotogaleri->setSifre($yeniSifre);
+        break;
+    case 'baslikDedis':
+        $fotogaleri->setTitle($_POST['galeriBasligi']);
         break;
 }
 header("Location:settings.php");

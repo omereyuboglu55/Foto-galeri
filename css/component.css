@@ -3,6 +3,7 @@
     margin: 0 auto;
     list-style: none;
     text-align: center;
+    position: relative;
 }
 
 .grid li {

@@ -3,6 +3,7 @@
 <?php
 include_once "fotoGaleri.php";
 $fotoGaleri = new fotoGaleri();
+if (empty($fotoGaleri->resimler)) header("Location:settings.php");
 ?>
 <head>
     <meta charset="utf-8">

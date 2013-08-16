@@ -20,7 +20,7 @@ class fotoGaleri extends SimpleImage
      *
      * String
      */
-    private $sifre = '123456';
+    private $sifre;
     /**
      * Belirlenen resmin uzantısı
      *
@@ -62,6 +62,7 @@ class fotoGaleri extends SimpleImage
             $icerik = '<?xml version="1.0"?>
 <galeri>
     <title>Galeri Başlığı</title>
+    <sifre>e10adc3949ba59abbe56e057f20f883e</sifre>
 </galeri>';
             if (!file_put_contents($this->xmlDosya, $icerik)) $this->Hata(5);
             chmod($this->xmlDosya, 0644);
@@ -79,6 +80,7 @@ class fotoGaleri extends SimpleImage
     private function setGaleri()
     {
         $this->title = $this->xmlObj->title;
+        $this->sifre = $this->xmlObj->sifre;
         $j = 0;
         foreach ($this->xmlObj->sutun as $sutun) {
             foreach ($sutun->resim as $resim) {
@@ -86,6 +88,16 @@ class fotoGaleri extends SimpleImage
             }
             $j++;
         }
+    }
+
+    /**
+     * Şifreyi  tanımlar
+     * @param $title
+     */
+    public function setTitle($title){
+        $xml=file_get_contents($this->xmlDosya);
+        $xml=str_replace($this->title,$title,$xml);
+        file_put_contents($this->xmlDosya,$xml);
     }
 
     /**
@@ -105,11 +117,20 @@ class fotoGaleri extends SimpleImage
      */
     public function sifreKontrol($sifre)
     {
-        if ($this->sifre === $sifre) {
+        if ($this->sifre == md5($sifre)) {
             return true;
         } else {
             return false;
         }
+    }
+
+    /**
+     * @param $sifre
+     */
+    public function setSifre($sifre){
+        $xml=file_get_contents($this->xmlDosya);
+        $xml=str_replace($this->sifre,md5($sifre),$xml);
+        file_put_contents($this->xmlDosya,$xml);
     }
 
     /**
@@ -248,10 +269,11 @@ class fotoGaleri extends SimpleImage
      */
     public function resimleriListele()
     {
-        $liste = '';
+        $liste = '<div class="sutunlar">';
         $this->resimler[] = array('images/ekle.png'); //boş bir sutun eklemek için
         $sutunId = 1;
         foreach ($this->resimler as $sutun) {
+            if($sutunId<11):
             if (is_array($sutun)) {
                 $liste .= '<div class="sutun" id="' . $sutunId . '">' . "\n";
                 $liste .= '<ul class="grid cs-style-3">' . "\n";
@@ -263,7 +285,7 @@ class fotoGaleri extends SimpleImage
                     if (current($sutun) != 'images/ekle.png') {
                         $liste .= '             <figcaption>
                                         <div id="fancydegistir_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="degistir">
@@ -273,7 +295,7 @@ class fotoGaleri extends SimpleImage
                                             </form>
                                         </div>
                                         <div id="fancysil_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form id="resimSil_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form id="resimSil_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
                                                 Resmi silmek istiyor musunuz?
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
@@ -290,7 +312,7 @@ class fotoGaleri extends SimpleImage
                         $liste .= '
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="ekle">
@@ -318,7 +340,7 @@ class fotoGaleri extends SimpleImage
                                     <img src="images/ekle.png" alt="' . $resim . '">
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="resimisle.php">
+                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="ekle">
@@ -335,7 +357,9 @@ class fotoGaleri extends SimpleImage
                 $liste .= '</ul>' . "\n" . '</div>' . "\n";
             }
             $sutunId++;
+            endif;
         }
+        $liste.='<div style="clear:both;"></div>'."\n".'</div>'."\n";
         echo $liste;
     }
 
@@ -367,7 +391,7 @@ class fotoGaleri extends SimpleImage
      */
     public function Hata($kod)
     {
-
+        header("Content-type:text/html; charset=utf-8");
         switch ($kod) {
             case 1:
                 die("HATA 1: Yüklenen Dosya PHP'ninizin verilen dosya boyutunu  aşmaktadır.");

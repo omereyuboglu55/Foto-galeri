@@ -62,7 +62,7 @@ class fotoGaleri extends SimpleImage
             $icerik = '<?xml version="1.0"?>
 <galeri>
     <title>Galeri Başlığı</title>
-    <sifre>e10adc3949ba59abbe56e057f20f883e</sifre>
+    <sifre>' . md5('123456') . '</sifre>
 </galeri>';
             if (!file_put_contents($this->xmlDosya, $icerik)) $this->Hata(5);
             chmod($this->xmlDosya, 0644);
@@ -94,10 +94,11 @@ class fotoGaleri extends SimpleImage
      * Şifreyi  tanımlar
      * @param $title
      */
-    public function setTitle($title){
-        $xml=file_get_contents($this->xmlDosya);
-        $xml=str_replace($this->title,$title,$xml);
-        file_put_contents($this->xmlDosya,$xml);
+    public function setTitle($title)
+    {
+        $xml = file_get_contents($this->xmlDosya);
+        $xml = str_replace($this->title, $title, $xml);
+        file_put_contents($this->xmlDosya, $xml);
     }
 
     /**
@@ -127,10 +128,11 @@ class fotoGaleri extends SimpleImage
     /**
      * @param $sifre
      */
-    public function setSifre($sifre){
-        $xml=file_get_contents($this->xmlDosya);
-        $xml=str_replace($this->sifre,md5($sifre),$xml);
-        file_put_contents($this->xmlDosya,$xml);
+    public function setSifre($sifre)
+    {
+        $xml = file_get_contents($this->xmlDosya);
+        $xml = str_replace($this->sifre, md5($sifre), $xml);
+        file_put_contents($this->xmlDosya, $xml);
     }
 
     /**
@@ -269,97 +271,111 @@ class fotoGaleri extends SimpleImage
      */
     public function resimleriListele()
     {
-        $liste = '<div class="sutunlar">';
+        $liste = '<div class="row-fluid">';
         $this->resimler[] = array('images/ekle.png'); //boş bir sutun eklemek için
         $sutunId = 1;
         foreach ($this->resimler as $sutun) {
-            if($sutunId<11):
-            if (is_array($sutun)) {
-                $liste .= '<div class="sutun" id="' . $sutunId . '">' . "\n";
-                $liste .= '<ul class="grid cs-style-3">' . "\n";
-                $resimId = 1;
-                foreach ($sutun as $resim) {
-                    $liste .= '     <li id="' . $resimId . '">
+            if ($sutunId < 11):
+                if (is_array($sutun)) {
+                    $liste .= '<div class="sutun" id="' . $sutunId . '">' . "\n";
+                    $liste .= '<ul class="grid cs-style-3">' . "\n";
+                    $resimId = 1;
+                    foreach ($sutun as $resim) {
+                        $liste .= '     <li id="' . $resimId . '">
                                  <figure>
                                     <img src="' . $resim . '" alt="' . $resim . '">';
-                    if (current($sutun) != 'images/ekle.png') {
-                        $liste .= '             <figcaption>
+                        if (current($sutun) != 'images/ekle.png') {
+                            $liste .= '             <figcaption>
                                         <div id="fancydegistir_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
-                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
-                                                <input type="hidden" name="resimId" value="' . $resimId . '">
-                                                <input type="hidden" name="islem" value="degistir">
-                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
-                                                <input type="file" name="resim">
-                                                <input type="submit" value="Tamam">
+                                            <form class="form-inline" enctype="multipart/form-data" id="resimDegistir_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
+                                                <div class="input-append text-center" style="margin: 0px auto; width: 100%;">
+                                                    <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                    <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                    <input type="hidden" name="islem" value="degistir">
+                                                    <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
+                                                    <input type="file" name="resim" class="input-medium">
+                                                    <button class="btn" type="submit">Değiştir</button>
+
+                                                </div>
+                                                <span class="help-block">Sadece jpg ve png uzantılı resimler</span>
                                             </form>
                                         </div>
                                         <div id="fancysil_' . $sutunId . '-' . $resimId . '" style="display:none;">
                                             <form id="resimSil_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
-                                                Resmi silmek istiyor musunuz?
+                                                <div class="alert">
+                                                    <h4>Resmi silmek istiyor musunuz?</h4>
+                                                </div>
                                                 <input type="hidden" name="sutunId" value="' . $sutunId . '">
                                                 <input type="hidden" name="resimId" value="' . $resimId . '">
                                                 <input type="hidden" name="islem" value="sil">
-                                                <input type="submit" value="Evet">
-                                                <input type="button" value="Hayır" onclick="$.fancybox.close()">
+                                                <div class="form-action text-center">
+                                                    <input type="submit" class="btn btn-success btn-large" value="Evet">
+                                                    <input type="button" class="btn btn-danger btn-large offset1" value="Hayır" onclick="$.fancybox.close()">
+                                                </div>
                                             </form>
                                         </div>
                                         <a class="fancybox" href="#fancydegistir_' . $sutunId . '-' . $resimId . '">Değiştir</a>
                                         <a class="fancybox" href="#fancysil_' . $sutunId . '-' . $resimId . '">Sil</a>
                                     </figcaption>';
 
-                    } else {
-                        $liste .= '
+                        } else {
+                            $liste .= '
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
-                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
-                                                <input type="hidden" name="resimId" value="' . $resimId . '">
-                                                <input type="hidden" name="islem" value="ekle">
-                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
-                                                <input type="file" name="resim">
-                                                <input type="submit" value="Tamam">
+                                            <form class="form-inline" enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
+                                                <div class="input-append text-center" style="margin: 0px auto; width: 100%;">
+                                                    <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                    <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                    <input type="hidden" name="islem" value="ekle">
+                                                    <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
+                                                    <input type="file" name="resim" class="input-medium">
+                                                    <button class="btn" type="submit">Ekle</button>
+                                                </div>
+                                                <span class="help-block">Sadece jpg ve png uzantılı resimler</span>
                                             </form>
                                         </div>
                                         <a class="fancybox" href="#fancyekle_' . $sutunId . '-' . $resimId . '">Ekle</a>
                                     </figcaption>
                         ';
-                    }
-                    $liste .= '
+                        }
+                        $liste .= '
                                 </figure>
                             </li>';
-                    $resimId++;
-                }
-                /*
-                 * if = son sütun hariç her sütüne yeni resim için boş alan ekle
-                 */
-                if (current($sutun) != 'images/ekle.png') {
-                    $liste .= '
+                        $resimId++;
+                    }
+                    /*
+                     * if = son sütun hariç her sütüne yeni resim için boş alan ekle
+                     */
+                    if (current($sutun) != 'images/ekle.png') {
+                        $liste .= '
                             <li id="' . $resimId . '">
                                 <figure>
                                     <img src="images/ekle.png" alt="' . $resim . '">
                                     <figcaption>
                                         <div id="fancyekle_' . $sutunId . '-' . $resimId . '" style="display:none;">
-                                            <form enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
-                                                <input type="hidden" name="sutunId" value="' . $sutunId . '">
-                                                <input type="hidden" name="resimId" value="' . $resimId . '">
-                                                <input type="hidden" name="islem" value="ekle">
-                                                <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
-                                                <input type="file" name="resim">
-                                                <input type="submit" value="Tamam">
+                                            <form class="form-inline" enctype="multipart/form-data" id="resimEkle_' . $sutunId . '-' . $resimId . '" method="post" action="postisle.php">
+                                                <div class="input-append text-center" style="margin: 0px auto; width: 100%;">
+                                                    <input type="hidden" name="sutunId" value="' . $sutunId . '">
+                                                    <input type="hidden" name="resimId" value="' . $resimId . '">
+                                                    <input type="hidden" name="islem" value="ekle">
+                                                    <input type="hidden" name="MAX_FILE_SIZE" value="' . $this->getUploadMaxFilesize() . '" />
+                                                    <input type="file" name="resim" class="input-medium">
+                                                    <button class="btn" type="submit">Ekle</button>
+                                                </div>
+                                                <span class="help-block">Sadece jpg ve png uzantılı resimler</span>
                                             </form>
                                         </div>
                                         <a class="fancybox" href="#fancyekle_' . $sutunId . '-' . $resimId . '">Ekle</a>
                                     </figcaption>
                                 </figure>
                             </li>';
+                    }
+                    $liste .= '</ul>' . "\n" . '</div>' . "\n";
                 }
-                $liste .= '</ul>' . "\n" . '</div>' . "\n";
-            }
-            $sutunId++;
+                $sutunId++;
             endif;
         }
-        $liste.='<div style="clear:both;"></div>'."\n".'</div>'."\n";
+        $liste .= '<div style="clear:both;"></div>' . "\n" . '</div>' . "\n";
         echo $liste;
     }
 
@@ -372,6 +388,7 @@ class fotoGaleri extends SimpleImage
         $val = ini_get('upload_max_filesize');
         $val = trim($val);
         $last = strtolower($val[strlen($val) - 1]);
+        // todo buradaki  switch gereksiz gibi test etmek lazım
         switch ($last) {
             // 'G' birimi PHP 5.1.0 sürümünden beri var.
             case 'g':
@@ -385,60 +402,111 @@ class fotoGaleri extends SimpleImage
         return $val;
     }
 
+    public function oturumKontrol()
+    {
+        $sifreForm = '<script type="text/javascript">
+        $(document).ready(function () {
+            $("#girisAc").fancybox({margin: 0,autoCenter: true,autoResize: true,minHeight: 0,
+                afterClose : function() {window.history.back()}});});
+        </script>
+            <div id="girisForm" class="">
+                <form class="form" id="sifreForm" action="postisle.php" method="post">
+                    <legend>Şifre Girin</legend>
+                    <div class="control-group">
+                       <div class="controls">
+                           <input type="password" id="sifre" name="sifre"/>
+                           <input type="hidden" name="islem" value="giris"/>
+                       </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success btn-block">Doğrula</button>
+                    </div>
+                </form>
+            </div>
+            <a id="girisAc" href="#girisForm" class="fancy fancybox"></a>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(\'#girisAc\').trigger(\'click\');
+                });
+            </script>';
+        if ($_SESSION['oturum']) {
+            return true;
+        } else {
+            die($sifreForm);
+        }
+    }
+
     /**
      * Bir hata oluştuğunda bu fonksiyon o hatayı denetleyecek yada try kullanınca gerek kalmayacak
      * @param $kod
      */
     public function Hata($kod)
     {
-        header("Content-type:text/html; charset=utf-8");
+        $hataMesaji = '<script type="text/javascript">
+        $(document).ready(function () {
+            $("#hataAc").fancybox({margin: 0,autoCenter: true,autoResize: true,padding: 0,minHeight: 0,
+                afterClose : function() {
+                    window.history.back()
+                }
+            });
+        });
+        </script><div id="hataMesaji" class="alert alert-danger" style="margin-bottom: 0px;">';
         switch ($kod) {
             case 1:
-                die("HATA 1: Yüklenen Dosya PHP'ninizin verilen dosya boyutunu  aşmaktadır.");
+                $hataMesaji .= '<h4>HATA 1</h4> Yüklenen Dosya PHP\'ninizin verilen dosya boyutunu  aşmaktadır.';
                 break;
             case 2:
-                die("HATA 2: Yüklenen Dosya maximum dosya boyutunu  aşmaktadır.");
+                $hataMesaji .= '<h4>HATA 2</h4> Yüklenen Dosya maximum dosya boyutunu  aşmaktadır.';
                 break;
             case 3:
-                die("HATA 3: Dosya tam olarak yüklemenemedi");
+                $hataMesaji .= '<h4>HATA 3</h4> Dosya tam olarak yüklemenemedi';
                 break;
             case 4:
-                die("HATA 4: Hiçbir dosya seçilmedi");
+                $hataMesaji .= '<h4>HATA 4</h4> Hiçbir dosya seçilmedi';
                 break;
             case 5:
-                die("HATA 5: galeri.xml oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                $hataMesaji .= '<h4>HATA 5</h4> galeri.xml oluşturulamadı.Lütfen dosya izinlerini kontrol edin.';
                 break;
             case 6:
-                die("HATA 6: Geçici dizin yok");
+                $hataMesaji .= '<h4>HATA 6</h4> Geçici dizin yok';
                 break;
             case 7:
-                die("HATA 7: Dosya diske yazılamadı");
+                $hataMesaji .= '<h4>HATA 7</h4> Dosya diske yazılamadı';
                 break;
             case 8:
-                die("HATA 8: Yükleme bir eklentiden dolayı durdu.");
+                $hataMesaji .= '<h4>HATA 8</h4> Yükleme bir eklentiden dolayı durdu.';
                 break;
             case 9:
-                die("HATA 9: galeri.xml dosyasında hata var.Lütfen Kontrol edin.");
+                $hataMesaji .= '<h4>HATA 9</h4> galeri.xml dosyasında hata var.Lütfen Kontrol edin.';
                 break;
             case 10:
-                die("HATA 10: Değişiklik galeri.xml dosyasına yazılamadı");
+                $hataMesaji .= '<h4>HATA 10</h4> Değişiklik galeri.xml dosyasına yazılamadı';
                 break;
             case 11:
-                die("HATA 11: galeri.xml dosyası okunamadı.Lütfen dosya izinlerini kontrol edin.");
+                $hataMesaji .= '<h4>HATA 11</h4> galeri.xml dosyası okunamadı.Lütfen dosya izinlerini kontrol edin.';
                 break;
             case 12:
-                die("HATA 12: Resim silinemedi.Lütfen dosya izinlerini kontrol edin.");
+                $hataMesaji .= '<h4>HATA 12</h4> Resim silinemedi.Lütfen dosya izinlerini kontrol edin.';
                 break;
             case 13:
-                die("HATA 13: Resim oluşturulamadı.Lütfen dosya izinlerini kontrol edin.");
+                $hataMesaji .= '<h4>HATA 13</h4> Resim oluşturulamadı.Lütfen dosya izinlerini kontrol edin.';
                 break;
             case 14:
-                die("HATA 14: Yüklenen resim uzantısı desteklenmiyor.");
+                $hataMesaji .= '<h4>HATA 14</h4> Yüklenen resim uzantısı desteklenmiyor.';
                 break;
             case 15:
-                die("HATA 15: ");
+                $hataMesaji .= '<h4>HATA 15</h4> ';
                 break;
         }
+        $hataMesaji .= '</div>
+            <a id="hataAc" href="#hataMesaji" class="fancy"></a>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(\'#hataAc\').trigger(\'click\');
+                });
+            </script> ';
+        die($hataMesaji);
+
     }
 }
 

@@ -1,5 +1,3 @@
-@import url("reset.css");
-
 /* layout */
 
 body {
@@ -180,35 +178,21 @@ h1 {
     font-family: 'Jim Nightshade', cursive;
 }
 
-/* header */
-#header {
-    height: 25px;
-    line-height: 24px;
-    font-size: 12px;
-    background: #000;
-    opacity: 0.9;
-    text-transform: uppercase;
-    z-index: 999;
-    position: relative;
+.sutun {
+    width: 9%;
+    float: left;
+    margin-right: 1%;
 }
 
-#header a {
-    padding: 5px 10px;
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 1px #000;
-    color: #ddd;
-    text-align: right;
+.sutun ul {
+    padding: 0;;
 }
 
-#header a:hover {
-    color: #fff;
+.sutunlar {
+    min-width: 960px;
+    margin: 0 auto;
 }
 
-#header a span {
-    font-weight: bold;
-}
-
-#header span.right_ab {
-    position: absolute;
-    right: 4px;
+.fancy {
+    display: none;
 }

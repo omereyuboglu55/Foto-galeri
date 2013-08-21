@@ -11,8 +11,6 @@ if (empty($fotoGaleri->resimler)) header("Location:settings.php");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $fotoGaleri->title?></title>
     <link rel="shortcut icon" href="../favicon.ico">
-    <meta name="description" content="Açıklama"/>
-    <meta name="keywords" content=""/>
     <meta name="author" content="Samet ATABAŞ"/>
     <link href='css/JimNightshade-Regular.ttf' rel='stylesheet' type='text/css'/>
     <link href='http://fonts.googleapis.com/css?family=Jim+Nightshade&subset=latin,latin-ext' rel='stylesheet' type='text/css'>

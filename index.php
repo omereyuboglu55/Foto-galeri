@@ -47,6 +47,7 @@ if (empty($fotoGaleri->resimler)) header("Location:settings.php");
         </div>
     </div>
 </div>
+<a id="duzenleLink" href="settings.php" style="position: fixed; bottom: 5px; right: 5px;">Düzenle</a>
 </body>
 </html>
 

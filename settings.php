@@ -56,8 +56,9 @@ $fotoGaleri = new fotoGaleri();
     }
     $fotoGaleri->resimleriListele();
     ?>
-    <a href="#ayarlar" id="ayarlarAc" class="pull-right"><i class="icon-wrench icon-align-right icon-white"></i>Ayarlar</a>
-
+    <hr>
+    <a href="#ayarlar" id="ayarlarAc" class="pull-right">Ayarlar</a>
+    <a href="index.php" class="pull-left">Galeriye Dön</a>
 </div>
 <div id="ayarlar" class="fancy">
     <?php if ($fotoGaleri->sifreKontrol('123456')) { ?>
@@ -65,7 +66,8 @@ $fotoGaleri = new fotoGaleri();
             <h4>Dikkat!</h4>
             Bu foto galeriyi ilk kullanışınız ilk kullanımda şifreyi değiştirmeniz gerekmektedir.
         </div>
-    <?php } ?>
+    <?php  }
+    //TODO ajax ile yapılsın ?>
     <form method="post" action="postisle.php" class="form-horizontal">
         <h4>Başlığı Ayarla</h4>
 

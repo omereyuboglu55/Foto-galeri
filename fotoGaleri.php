@@ -407,10 +407,17 @@ class fotoGaleri extends SimpleImage
         $sifreForm = '<script type="text/javascript">
         $(document).ready(function () {
             $("#girisAc").fancybox({margin: 0,autoCenter: true,autoResize: true,minHeight: 0,
-                afterClose : function() {window.history.back()}});});
+                afterClose : function() {window.history.back()}});});//todo index.php ye yönlendirsin
         </script>
             <div id="girisForm" class="">
-                <form class="form" id="sifreForm" action="postisle.php" method="post">
+                <form class="form" id="sifreForm" action="postisle.php" method="post">';
+        if($this->sifreKontrol('123456')):
+            $sifreForm.= '
+                    <div class="alert alert-danger" style="margin:0;">
+                        İlk Giriş Şifreniz "123456"
+                    </div>';
+            endif;
+            $sifreForm.='
                     <legend>Şifre Girin</legend>
                     <div class="control-group">
                        <div class="controls">

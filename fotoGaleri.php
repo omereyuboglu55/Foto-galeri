@@ -63,7 +63,9 @@ class fotoGaleri extends SimpleImage {
     <sifre>' . $this->sifrele( '123456' ) . '</sifre>
 </galeri>';
 			if ( ! file_put_contents( $this->xmlDosya, $icerik ) ) $this->Hata( 5 );
+			if ( ! mkdir( __DIR__ . '/uploads' ) ) $this->Hata( 15 );
 			chmod( $this->xmlDosya, 0600 );
+			chmod( __DIR__ . '/uploads', 0775 );
 		}
 		//TODO buradaki taha kontrolü işe yaramıyor araştırmak lazım
 		if ( ! ( $this->xmlObj = new SimpleXMLElement( $this->xmlDosya, null, true ) ) ) $this->Hata( 9 );
@@ -136,6 +138,7 @@ class fotoGaleri extends SimpleImage {
 
 	/**
 	 * Kırılımaz bir  şifre oluşturur
+	 *
 	 * @param $sifre
 	 *
 	 * @return string
@@ -158,10 +161,10 @@ class fotoGaleri extends SimpleImage {
 		if ( $resimBilgileri['error'] === UPLOAD_ERR_OK ) {
 			$uzanti = end( explode( '.', $resimBilgileri['name'] ) );
 			if ( in_array( $uzanti, $this->gecerliUzantilar ) ) {
-				$resimYolu = 'images/' . time() . '.' . $uzanti;
+				$resimYolu = 'uploads/' . time() . '.' . $uzanti;
 				if ( ! ( $this->load( $resimBilgileri['tmp_name'] ) ) ) $this->Hata( 13 );
 				$this->resize( 600, 400 );
-				$this->save( $resimYolu );
+				if ( $this->save( $resimYolu ) === false ) $this->Hata( 13 );
 			}
 			else $this->Hata( 14 );
 		}
@@ -251,7 +254,7 @@ class fotoGaleri extends SimpleImage {
 		if ( $resimBilgileri['error'] === UPLOAD_ERR_OK ) {
 			$uzanti = end( explode( '.', $resimBilgileri['name'] ) );
 			if ( in_array( $uzanti, $this->gecerliUzantilar ) ) {
-				$resimYolu = 'images/' . time() . '.' . $uzanti;
+				$resimYolu = 'uploads/' . time() . '.' . $uzanti;
 				if ( ! ( $this->load( $resimBilgileri['tmp_name'] ) ) ) $this->Hata( 13 );
 				$this->resize( 600, 400 );
 				$this->save( $resimYolu );
@@ -514,7 +517,10 @@ class fotoGaleri extends SimpleImage {
 				$hataMesaji .= '<h4>HATA 14</h4> Yüklenen resim uzantısı desteklenmiyor.';
 				break;
 			case 15:
-				$hataMesaji .= '<h4>HATA 15</h4> ';
+				$hataMesaji .= '<h4>HATA 15</h4> Upload dizini oluşturulamadı';
+				break;
+			case 16:
+				$hataMesaji .= '<h4>HATA 16</h4> ';
 				break;
 		}
 		$hataMesaji .= '</div>

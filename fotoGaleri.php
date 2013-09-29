@@ -4,7 +4,7 @@
  * User: sametatabasch
  * Date: 14.07.2013
  * Time: 03:16
- * To change this template use File | Settings | File Templates.
+ * version: 1.0
  */
 include_once 'SimpleImage.php';
 class fotoGaleri extends SimpleImage {

@@ -203,3 +203,8 @@ h1 {
     right: 5px;
     z-index: 99999;
 }
+.copyright{
+	clear: both;
+	margin: 0 auto;
+	width: 165px;
+}
